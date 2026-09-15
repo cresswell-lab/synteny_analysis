@@ -72,4 +72,11 @@ fix_fastq = metadata %>%
   mutate(sample = gsub('_CUT&Tag ', '_', sample)) 
 write.table(fix_fastq, '/nobackup/lab_cresswell/vgazziero/shallow_sarek/fix_fastq.csv', sep =',', quote = F, row.names = F, col.names = F)
 
+# prepare the csv for nf-core/cut&run pipeline -- read the existing csv
 
+sarek_input = read.table('/nobackup/lab_cresswell/vgazziero/cut_and_tag_processing/input.csv', header = T, sep = ',')
+sarek_input = sarek_input %>%
+  extract(sample, into = c("group", "replicate"), regex = "^(.*)_([^_]+)$", remove = FALSE) %>%
+  dplyr::select(group, replicate, fastq_1, fastq_2) %>%
+  mutate(control = '')
+write.table(sarek_input, '/nobackup/lab_cresswell/vgazziero/cut_and_tag_processing/run_and_tag_alignment/input.csv', sep =',', quote = F, row.names = F, col.names = T)
